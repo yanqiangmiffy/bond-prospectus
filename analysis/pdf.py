@@ -14,7 +14,7 @@ from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LTTextBoxHorizontal, LAParams
 from pdfminer.pdfinterp import PDFTextExtractionNotAllowed
 
-text_path = '603055_20181213_6.pdf'
+text_path = 'pdf/603055_20181213_6.pdf'
 
 
 # text_path = r'photo-words.pdf'
@@ -59,7 +59,7 @@ def parse():
                     with open(r'2.txt', 'a',encoding='utf-8') as f:
                         results = x.get_text()
                         print(results)
-                        f.write(results + "\n")
+                        f.write(results)
 
 
 if __name__ == '__main__':
