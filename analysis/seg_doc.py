@@ -6,7 +6,7 @@
 import jieba
 
 temp = []
-with open('doc.txt', 'r', encoding='utf-8') as doc_file:
+with open('sse_doc.txt', 'r', encoding='utf-8') as doc_file:
     for para in doc_file.read().split('。'):
         if '风险' in para and len(para) < 500:
             para=para.replace(' ','')

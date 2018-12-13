@@ -58,32 +58,16 @@ def parse(pdf_path,txt_apth):
 
 
 if __name__ == '__main__':
-    # parse()
 
-    sse_pdf_path='../sse_pdf/'
-    sse_doc_path='sse_doc/'
-    for pdf in os.listdir(sse_pdf_path):
-        time1 = time.time()
-        doc_name=pdf.rstrip('.pdf')+'.txt'
-        if doc_name in os.listdir(sse_doc_path):
-            print("已经处理过：{}".format(doc_name))
-        else:
-            pdf_path=sse_pdf_path+pdf
-            txt_path=sse_doc_path+doc_name
-            print("正在处理：{}".format(pdf_path))
-            try:
-                parse(pdf_path,txt_path)
-                time2 = time.time()
-                print("总共消耗时间为:", time2 - time1)
-            except Exception as e:
-                print(txt_path, "出错")
+
     szse_pdf_path = '../szse_pdf/'
     szse_doc_path = 'szse_doc/'
-    for pdf in os.listdir(sse_pdf_path):
+    for pdf in os.listdir(szse_pdf_path):
         time1 = time.time()
         doc_name = pdf.rstrip('.pdf') + '.txt'
-        pdf_path = sse_pdf_path + pdf
-        txt_path = sse_doc_path + doc_name
+        pdf_path = szse_pdf_path + pdf
+        txt_path = szse_doc_path + doc_name
+        print("正在处理：{}".format(pdf_path))
         try:
             parse(pdf_path, txt_path)
             time2 = time.time()
