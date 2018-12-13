@@ -1,12 +1,13 @@
-import pyocr
-import importlib
-import sys
-import time
-import os
-importlib.reload(sys)
-# print("初始时间为：",time1)
+# !/usr/bin/env python3  
+# -*- coding:utf-8 _*-  
+""" 
+@Author:yanqiang 
+@File: pdf2.py
+@Time: 2018/12/13 17:05
+@Software: PyCharm 
+@Description:
+"""
 
-import os.path
 from pdfminer.pdfparser import PDFParser, PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
@@ -28,12 +29,11 @@ def parse(pdf_path,txt_apth):
 
     # 提供初始化密码，如果没有密码，就创建一个空的字符串
     doc.initialize()
+
     # 检测文档是否提供txt转换，不提供就忽略
     if not doc.is_extractable:
-        print("不提供txt转换")
         raise PDFTextExtractionNotAllowed
     else:
-
         # 创建PDF，资源管理器，来共享资源
         rsrcmgr = PDFResourceManager()
         # 创建一个PDF设备对象
@@ -41,7 +41,7 @@ def parse(pdf_path,txt_apth):
         device = PDFPageAggregator(rsrcmgr, laparams=laparams)
         # 创建一个PDF解释其对象
         interpreter = PDFPageInterpreter(rsrcmgr, device)
-        print(sum(1 for x in doc.get_pages()))
+
         # 循环遍历列表，每次处理一个page内容
         # sse_doc.get_pages() 获取page列表
         for page in doc.get_pages():
@@ -55,29 +55,6 @@ def parse(pdf_path,txt_apth):
                 if (isinstance(x, LTTextBoxHorizontal)):
                     with open(txt_apth, 'a',encoding='utf-8') as f:
                         results = x.get_text()
-                        print(results)
                         f.write(results)
 
 
-if __name__ == '__main__':
-
-
-    szse_pdf_path = '../szse_pdf/'
-    szse_doc_path = 'szse_doc/'
-    for pdf in os.listdir(szse_pdf_path):
-        time1 = time.time()
-        doc_name = pdf.rstrip('.pdf') + '.txt'
-        if doc_name in os.listdir(szse_doc_path):
-            pass
-            # print("已经处理过：{}".format(doc_name))
-        else:
-            pdf_path = szse_pdf_path + pdf
-            txt_path = szse_doc_path + doc_name
-            print("正在处理：{}".format(pdf_path))
-            try:
-                parse(pdf_path, txt_path)
-                time2 = time.time()
-                print("总共消耗时间为:", time2 - time1)
-            except Exception as e:
-                print(txt_path,"出错")
-                print(e)

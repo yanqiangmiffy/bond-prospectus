@@ -28,7 +28,7 @@ keep_cols = ['CCHANNELCODE', 'CTITLE_TXT', 'CONTENT', 'CRELEASETIME', 'CRELEASET
 # df = pd.DataFrame(columns=keep_cols)
 # df.to_csv('sse.csv', index=False, header=True)
 
-for i in range(40,305):
+for i in range(305):
     print("正在爬取{}页".format(i+1))
     payload = {
         'search': 'qwjs',
