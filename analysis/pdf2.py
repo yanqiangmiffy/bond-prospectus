@@ -5,7 +5,7 @@ import time
 import os
 importlib.reload(sys)
 # print("初始时间为：",time1)
-
+import shutil
 import os.path
 from pdfminer.pdfparser import PDFParser, PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -71,6 +71,8 @@ if __name__ == '__main__':
             pass
             # print("已经处理过：{}".format(doc_name))
         else:
+            shutil.copy2(szse_pdf_path + pdf,'un_szse/'+pdf)
+
             pdf_path = szse_pdf_path + pdf
             txt_path = szse_doc_path + doc_name
             print("正在处理：{}".format(pdf_path))
