@@ -41,7 +41,7 @@ def parse(pdf_path,txt_apth):
         device = PDFPageAggregator(rsrcmgr, laparams=laparams)
         # 创建一个PDF解释其对象
         interpreter = PDFPageInterpreter(rsrcmgr, device)
-        print(sum(1 for x in doc.get_pages()))
+        # print(sum(1 for x in doc.get_pages()))
         # 循环遍历列表，每次处理一个page内容
         # sse_doc.get_pages() 获取page列表
         for page in doc.get_pages():
@@ -55,7 +55,6 @@ def parse(pdf_path,txt_apth):
                 if (isinstance(x, LTTextBoxHorizontal)):
                     with open(txt_apth, 'a',encoding='utf-8') as f:
                         results = x.get_text()
-                        print(results)
                         f.write(results)
 
 
@@ -66,10 +65,9 @@ if __name__ == '__main__':
     szse_doc_path = 'szse_doc/'
     for pdf in os.listdir(szse_pdf_path):
         time1 = time.time()
-        doc_name = pdf.rstrip('.pdf') + '.txt'
+        doc_name = pdf.rstrip('.PDF') + '.txt'
         if doc_name in os.listdir(szse_doc_path):
-            pass
-            # print("已经处理过：{}".format(doc_name))
+            print("已经处理过：{}".format(doc_name))
         else:
             shutil.copy2(szse_pdf_path + pdf,'un_szse/'+pdf)
 

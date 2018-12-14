@@ -2,7 +2,7 @@ import pyocr
 import importlib
 import sys
 import time
-import os
+import shutil
 importlib.reload(sys)
 # print("初始时间为：",time1)
 
@@ -64,10 +64,11 @@ if __name__ == '__main__':
     sse_doc_path='sse_doc/'
     for pdf in os.listdir(sse_pdf_path):
         time1 = time.time()
-        doc_name=pdf.rstrip('.pdf')+'.txt'
+        doc_name=pdf.rstrip('.pdf').replace('.PDF','')+'.txt'
         if doc_name in os.listdir(sse_doc_path):
             print("已经处理过：{}".format(doc_name))
         else:
+            shutil.copy2(sse_pdf_path + pdf, 'un_sse/' + pdf)
             pdf_path=sse_pdf_path+pdf
             txt_path=sse_doc_path+doc_name
             print("正在处理：{}".format(pdf_path))
@@ -77,16 +78,3 @@ if __name__ == '__main__':
                 print("总共消耗时间为:", time2 - time1)
             except Exception as e:
                 print(txt_path, "出错")
-    szse_pdf_path = '../szse_pdf/'
-    szse_doc_path = 'szse_doc/'
-    for pdf in os.listdir(sse_pdf_path):
-        time1 = time.time()
-        doc_name = pdf.rstrip('.pdf') + '.txt'
-        pdf_path = sse_pdf_path + pdf
-        txt_path = sse_doc_path + doc_name
-        try:
-            parse(pdf_path, txt_path)
-            time2 = time.time()
-            print("总共消耗时间为:", time2 - time1)
-        except Exception as e:
-            print(txt_path,"出错")
