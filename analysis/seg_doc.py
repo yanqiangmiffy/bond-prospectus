@@ -17,4 +17,4 @@ with open('浙江台华新材料股份有限公司.txt', 'r', encoding='utf-8') 
             print('-' * 100)
             temp.append(para)
 
-print(len(temp))
+print(len(temp)//2)
