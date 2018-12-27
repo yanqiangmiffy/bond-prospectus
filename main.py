@@ -2,7 +2,7 @@
 # -*- coding:utf-8 _*-  
 """ 
 @Author:yanqiang 
-@File: main.py 
+@File: core.py
 @Time: 2018/12/26 17:40
 @Software: PyCharm 
 @Description: # 统计任务
@@ -57,49 +57,36 @@ def count(txt):
             para = para.replace(' ', '')
             temp.append(para)
     risk_txt_len = len("".join(temp))  # 风险描述字数
-    risk_para_cnt = len(temp)//2  # 风险自然段落统计
+    risk_para_cnt = len(temp) // 2  # 风险自然段落统计
     return risk_cnt, without_risk_cnt, txt_len, risk_txt_len, risk_para_cnt
 
 
-def count_risk_word(txt):
-    """
-    统计文档中风险出现的次数
-    :return:
-    """
-    return txt.count('风险')
+# sse['filename'] = sse.apply(lambda row: gen_filename(row), axis=1)
+# sse['txt'] = sse.apply(lambda row: get_text(row.filename), axis=1)
+# sse['risk_cnt'], sse['without_risk_cnt'], sse['txt_len'], sse['risk_txt_len'], sse[
+#     'risk_para_cnt'] = zip(*sse['txt'].map(count))
+from zhner.core import ner
+
+import numpy as np
 
 
-def count_without_risk(txt):
-    cnt = 0
-    tag_word = ['无', '低', '小', '没有', '不高', '不大']
-    for seg in txt.split('风险'):
-        for word in tag_word:
-            if word in seg[:6] or word in seg[:-5]:
-                cnt += 1
-    return cnt
+def get_fullname(row):
+    if str(row.CONTENT) != 'nan':
+        s = row.CONTENT
+    else:
+        s = str(row.CTITLE_TXT)
+    return ner(s)
 
 
-def count_risk_len(txt):
-    """
-    统计风险部分文字个数
-    :return:
-    """
-    temp = []
-    for para in txt.split('。'):
-        if '风险' in para and len(para) < 500:
-            para = para.replace(' ', '')
-            temp.append(para)
-    return len("".join(temp)), len(temp)
+# sse['full_name']  = sse.apply(lambda row: get_fullname(row), axis=1)
+
+def get_subname(row):
+    cans = [w for w in str(row.CONTENT).split(' ') if '股票简称' in w]
+    if len(cans) != 0:
+        return "".join(cans).replace('股票简称：', '')
+    else:
+        return None
 
 
-# df_test['size_kb'], df_test['size_mb'], df_test['size_gb'] = zip(*df_test['size'].apply(sizes))
-
-sse['filename'] = sse.apply(lambda row: gen_filename(row), axis=1)
-sse['txt'] = sse.apply(lambda row: get_text(row.filename), axis=1)
-# sse['risk_cnt'] = sse.apply(lambda row: count_risk_word(row.txt), axis=1)
-# sse['without_risk_cnt'] = sse.apply(lambda row: count_without_risk(row.txt), axis=1)
-# sse['txt_len'] = sse.apply(lambda row: len(row.txt), axis=1)
-# print(sse['txt','risk_cnt','without_risk_cnt','txt_len'])
-sse['risk_cnt'], sse['without_risk_cnt'], sse['txt_len'], sse['risk_txt_len'], sse[
-    'risk_para_cnt'] = zip(*sse['txt'].map(count))
-print(sse[['risk_cnt', 'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt']])
+sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
+print(sse.sub_name)
