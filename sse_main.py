@@ -93,4 +93,4 @@ sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
 
 cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
         'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'filename']
-sse[~sse['filename'].str.contains('摘要')].to_csv('sse_result.csv', index=False, header=False, columns=cols)
+sse[~sse['filename'].str.contains('摘要')].to_csv('result/sse_result.csv', index=False, header=False, columns=cols)

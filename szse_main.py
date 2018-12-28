@@ -2,7 +2,7 @@
 # -*- coding:utf-8 _*-  
 """ 
 @Author:yanqiang 
-@File: main2.py 
+@File: szse_main.py
 @Time: 2018/12/28 11:29
 @Software: PyCharm 
 @Description:
@@ -95,4 +95,4 @@ cols = ['full_name', 'sub_name', 'docpubtime', 'risk_cnt',
 szse = szse[~szse['filename'].str.contains('摘要')]
 szse = szse[~szse['filename'].str.contains('提示性公告')]
 
-szse.to_csv('szse_result.csv', index=False, header=False, columns=cols)
+szse.to_csv('result/szse_result.csv', index=False, header=False, columns=cols)
