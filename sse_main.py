@@ -56,8 +56,8 @@ def count(txt):
         if '风险' in para and len(para) < 500:
             para = para.replace(' ', '')
             temp.append(para)
-    risk_txt_len = len("".join(temp))//4  # 风险描述字数
-    risk_para_cnt = len(temp) // 4  # 风险自然段落统计
+    risk_txt_len = int(len("".join(temp)) // 1.5)  # 风险描述字数
+    risk_para_cnt = int(len(temp) // 1.5)  # 风险自然段落统计
     return risk_cnt, without_risk_cnt, txt_len, risk_txt_len, risk_para_cnt
 
 
