@@ -76,7 +76,7 @@ def count(txt):
 
 
 def count_risk_txtpara(txt):
-    paras = [para for para in re.split('第.节|第.条|第十.条', txt) if '风险' in para[:10]]
+    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', txt) if '风险' in para[:10]]
     paras = [para for para in paras if '...' not in para]
     return paras
 
