@@ -39,6 +39,10 @@ def get_text(filename):
 
 
 def count(txt):
+    if '节风险因素' in txt:
+        print(txt.count('节风险因素'))
+        if txt.count('节风险因素')!=2:
+            print(txt)
     risk_cnt = txt.count('风险')  # 风险词语个数
 
     without_risk_cnt = 0
@@ -64,35 +68,35 @@ szse['filename'] = szse.apply(lambda row: gen_filename(row), axis=1)
 szse['txt'] = szse.apply(lambda row: get_text(row.filename), axis=1)
 szse['risk_cnt'], szse['without_risk_cnt'], szse['txt_len'], szse['risk_txt_len'], szse[
     'risk_para_cnt'] = zip(*szse['txt'].map(count))
-from zhner.core import ner
-
-import numpy as np
-
-
-def get_fullname(row):
-    if row.doctitle.count('公司') >= 2:
-        s = str(row.doctitle)
-    else:
-        s = str(row.doccontent)
-    return ner(s).split('公司')[0] + '公司'
-
-
-szse['full_name'] = szse.apply(lambda row: get_fullname(row), axis=1)
-
-
-def get_subname(row):
-    cans = [w for w in str(row.doctitle).split('：')]
-    if len(cans) != 0:
-        return cans[0]
-    else:
-        return np.nan
-
-
-szse['sub_name'] = szse.apply(lambda row: get_subname(row), axis=1)
-
-cols = ['full_name', 'sub_name', 'docpubtime', 'risk_cnt',
-        'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'filename']
-szse = szse[~szse['filename'].str.contains('摘要')]
-szse = szse[~szse['filename'].str.contains('提示性公告')]
-
-szse.to_csv('result/szse_result.csv', index=False, header=False, columns=cols)
+# from zhner.core import ner
+#
+# import numpy as np
+#
+#
+# def get_fullname(row):
+#     if row.doctitle.count('公司') >= 2:
+#         s = str(row.doctitle)
+#     else:
+#         s = str(row.doccontent)
+#     return ner(s).split('公司')[0] + '公司'
+#
+#
+# szse['full_name'] = szse.apply(lambda row: get_fullname(row), axis=1)
+#
+#
+# def get_subname(row):
+#     cans = [w for w in str(row.doctitle).split('：')]
+#     if len(cans) != 0:
+#         return cans[0]
+#     else:
+#         return np.nan
+#
+#
+# szse['sub_name'] = szse.apply(lambda row: get_subname(row), axis=1)
+#
+# cols = ['full_name', 'sub_name', 'docpubtime', 'risk_cnt',
+#         'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'filename']
+# szse = szse[~szse['filename'].str.contains('摘要')]
+# szse = szse[~szse['filename'].str.contains('提示性公告')]
+#
+# szse.to_csv('result/szse_result.csv', index=False, header=False, columns=cols)

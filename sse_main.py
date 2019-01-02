@@ -40,6 +40,7 @@ def get_text(filename):
 
 
 def count(txt):
+    print(txt)
     risk_cnt = txt.count('风险')  # 风险词语个数
 
     without_risk_cnt = 0
@@ -65,32 +66,32 @@ sse['filename'] = sse.apply(lambda row: gen_filename(row), axis=1)
 sse['txt'] = sse.apply(lambda row: get_text(row.filename), axis=1)
 sse['risk_cnt'], sse['without_risk_cnt'], sse['txt_len'], sse['risk_txt_len'], sse[
     'risk_para_cnt'] = zip(*sse['txt'].map(count))
-from zhner.core import ner
-
-import numpy as np
-
-
-def get_fullname(row):
-    if row.CTITLE_TXT.count('公司') >=2:
-        s = str(row.CTITLE_TXT)
-    else:
-        s = str(row.CONTENT)
-    return ner(s).split('公司')[0]+'公司'
-
-
-sse['full_name'] = sse.apply(lambda row: get_fullname(row), axis=1)
-
-
-def get_subname(row):
-    cans = [w for w in str(row.CONTENT).split(' ') if '股票简称' in w]
-    if len(cans) != 0:
-        return "".join(cans).replace('股票简称：', '')
-    else:
-        return np.nan
-
-
-sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
-
-cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
-        'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'filename']
-sse[~sse['filename'].str.contains('摘要')].to_csv('result/sse_result.csv', index=False, header=False, columns=cols)
+# from zhner.core import ner
+#
+# import numpy as np
+#
+#
+# def get_fullname(row):
+#     if row.CTITLE_TXT.count('公司') >=2:
+#         s = str(row.CTITLE_TXT)
+#     else:
+#         s = str(row.CONTENT)
+#     return ner(s).split('公司')[0]+'公司'
+#
+#
+# sse['full_name'] = sse.apply(lambda row: get_fullname(row), axis=1)
+#
+#
+# def get_subname(row):
+#     cans = [w for w in str(row.CONTENT).split(' ') if '股票简称' in w]
+#     if len(cans) != 0:
+#         return "".join(cans).replace('股票简称：', '')
+#     else:
+#         return np.nan
+#
+#
+# sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
+#
+# cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
+#         'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'filename']
+# sse[~sse['filename'].str.contains('摘要')].to_csv('result/sse_result.csv', index=False, header=False, columns=cols)
