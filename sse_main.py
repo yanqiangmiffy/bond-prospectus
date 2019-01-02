@@ -61,7 +61,7 @@ def count(txt):
             if 70 < len(para) < 500:
                 para = para.replace(' ', '')
                 temp.append(para)
-        risk_para_cnt = int(len(temp) // 1.5)
+        risk_para_cnt = int(len(temp) // 2)
         flag = "是"
     else:
         temp = []
@@ -76,7 +76,7 @@ def count(txt):
 
 
 def count_risk_txtpara(txt):
-    paras = [para for para in re.split('第.节|第.条', txt) if '风险' in para[:20]]
+    paras = [para for para in re.split('第.节|第.条|第十.条', txt) if '风险' in para[:10]]
     paras = [para for para in paras if '...' not in para]
     return paras
 
