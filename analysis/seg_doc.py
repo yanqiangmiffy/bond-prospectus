@@ -5,16 +5,30 @@
 # @Software: PyCharm
 import jieba
 
-temp = []
-with open('浙江台华新材料股份有限公司.txt', 'r', encoding='utf-8') as doc_file:
-    for para in doc_file.read().split('。'):
-        if '风险' in para and len(para) < 500:
-            para=para.replace(' ','')
-            para=" ".join(para.split('\n')).strip()
-            print(para)
-            print('文本长度：{}'.format(len(para)))
-            print([word for word in jieba.cut(para) if word!=' '])
-            print('-' * 100)
-            temp.append(para)
+# temp = []
+# with open('浙江台华新材料股份有限公司.txt', 'r', encoding='utf-8') as doc_file:
+#     for para in doc_file.read().split('。'):
+#         if '风险' in para and len(para) < 500:
+#             para=para.replace(' ','')
+#             para=" ".join(para.split('\n')).strip()
+#             print(para)
+#             print('文本长度：{}'.format(len(para)))
+#             print([word for word in jieba.cut(para) if word!=' '])
+#             print('-' * 100)
+#             temp.append(para)
+#
+# print(len(temp)//2)
 
-print(len(temp)//2)
+
+temp = []
+with open('demo.txt', 'r', encoding='utf-8') as doc_file:
+    for para in doc_file.read().split('\n'):
+        # print(para)
+        # temp.append(para)
+        # print('--------')
+        if para.strip().endswith('。'):
+            print(para)
+            temp.append(para)
+            print('--------')
+
+print(len(temp))
