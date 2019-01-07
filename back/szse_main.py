@@ -39,44 +39,7 @@ def get_text(filename):
     return txt
 
 
-def get_raw_txt(filename):
-    szse_doc_path = 'analysis/szse_doc_v2/'
-    with open(szse_doc_path + filename, 'r', encoding='utf-8') as f:
-        raw_txt = f.read()
-    return raw_txt
-
-
-def detect_risk_txt(raw_txt, filename):
-    """
-    定位风险段落
-    :param raw_txt:
-    :param filename:
-    :return:
-    """
-    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', raw_txt) if '风险' in para[:15]]
-    paras = [para for para in paras if '...' not in para]
-
-    # 段落数小于13
-    new_txt = "".join(paras)
-    temp = []
-    for para in new_txt.split('\n'):
-        if para.strip().endswith('。'):
-            temp.append(para)
-    if 0 < len(temp) <= 13 and '摘要' not in filename:
-        all_paras = re.split('第.节|第.条|第十.条|第.章', raw_txt)
-        new_paras = []
-        for para in all_paras:
-            if '....' not in para and '风险' in para[:15]:
-                flag_para = para
-                flag_index = all_paras.index(flag_para)
-                new_paras.append(flag_para)
-                new_paras.append(all_paras[flag_index + 1])
-                return new_paras
-                # break
-    return paras
-
-
-def count(txt, raw_txt, filename):
+def count(txt):
     #  风险词语个数
     risk_cnt = txt.count('风险')  # 风险词语个数
     # 无风险个数
@@ -90,9 +53,9 @@ def count(txt, raw_txt, filename):
     txt_len = len(txt)
 
     # 风险部分统计
-    paras = detect_risk_txt(raw_txt, filename)
+    paras = count_risk_txt(txt)
     if len(paras) != 0:
-        risk_txt_len = len("".join("".join(paras).split()))
+        risk_txt_len = len("".join(paras))
         sent = []
         all_sent = []
         for para in "".join(paras).split('。'):
@@ -121,14 +84,22 @@ def count(txt, raw_txt, filename):
            risk_txt_len, part_sent_cnt, all_sent_cnt, flag
 
 
-def count_risk_para(raw_txt, filename):
+def count_risk_txt(txt):
+    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', txt) if '风险' in para[:10]]
+    paras = [para for para in paras if '...' not in para]
+    return paras
+
+
+def count_risk_para(filename):
     """
     统计风险部分段落个数
-    :param raw_txt:
     :param filename:
     :return:
     """
-    paras = detect_risk_txt(raw_txt, filename)
+    szse_doc_path = 'analysis/szse_doc_v2/'
+    with open(szse_doc_path + filename, 'r', encoding='utf-8') as f:
+        raw_txt = f.read()
+    paras = count_risk_txt(raw_txt)
     txt = "".join(paras)
     temp = []
     for para in txt.split('\n'):
@@ -139,14 +110,9 @@ def count_risk_para(raw_txt, filename):
 
 szse['filename'] = szse.apply(lambda row: gen_filename(row), axis=1)
 szse['txt'] = szse.apply(lambda row: get_text(row.filename), axis=1)
-szse['raw_txt'] = szse.apply(lambda row: get_raw_txt(row.filename), axis=1)
 szse['risk_cnt'], szse['without_risk_cnt'], szse['txt_len'], szse['risk_txt_len'], szse[
-    'part_sent_cnt'], szse['all_sent_cnt'], szse['flag'] = zip(
-    *szse.apply(lambda row: count(row.txt, row.raw_txt, row.filename), axis=1))
-
-print("统计风险部分段落个数")
-szse['risk_para_cnt'] = szse.apply(lambda row: count_risk_para(row.raw_txt, row.filename), axis=1)
-
+    'part_sent_cnt'], szse['all_sent_cnt'], szse['flag'] = zip(*szse['txt'].map(count))
+szse['risk_para_cnt'] = szse.apply(lambda row: count_risk_para(row.filename), axis=1)
 
 from zhner.core import ner
 

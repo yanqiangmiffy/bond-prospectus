@@ -35,5 +35,5 @@ print(szse.shape)
 # print(df)
 
 # df.to_csv('result/债券募集说明书统计数据.csv', index=False, header=True)
-df.to_csv('result/债券募集说明书统计数据_v2.csv', index=False, header=True)
+df.to_csv('result/债券募集说明书统计数据_v3.csv', index=False, header=True)
 

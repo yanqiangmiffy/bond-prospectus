@@ -39,7 +39,44 @@ def get_text(filename):
     return txt
 
 
-def count(txt):
+def get_raw_txt(filename):
+    sse_doc_path = 'analysis/sse_doc_v2/'
+    with open(sse_doc_path + filename, 'r', encoding='utf-8') as f:
+        raw_txt = f.read()
+    return raw_txt
+
+
+def detect_risk_txt(raw_txt, filename):
+    """
+    定位风险段落
+    :param raw_txt:
+    :param filename:
+    :return:
+    """
+    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', raw_txt) if '风险' in para[:15]]
+    paras = [para for para in paras if '...' not in para]
+
+    # 段落数小于13
+    new_txt = "".join(paras)
+    temp = []
+    for para in new_txt.split('\n'):
+        if para.strip().endswith('。'):
+            temp.append(para)
+    if 0 < len(temp) <= 13 and '摘要' not in filename:
+        all_paras = re.split('第.节|第.条|第十.条|第.章', raw_txt)
+        new_paras = []
+        for para in all_paras:
+            if '....' not in para and '风险' in para[:15]:
+                flag_para = para
+                flag_index = all_paras.index(flag_para)
+                new_paras.append(flag_para)
+                new_paras.append(all_paras[flag_index + 1])
+                return new_paras
+                # break
+    return paras
+
+
+def count(txt, raw_txt, filename):
     #  风险词语个数
     risk_cnt = txt.count('风险')  # 风险词语个数
     # 无风险个数
@@ -53,9 +90,9 @@ def count(txt):
     txt_len = len(txt)
 
     # 风险部分统计
-    paras = count_risk_txt(txt)
+    paras = detect_risk_txt(raw_txt, filename)
     if len(paras) != 0:
-        risk_txt_len = len("".join(paras))
+        risk_txt_len = len("".join("".join(paras).split()))
         sent = []
         all_sent = []
         for para in "".join(paras).split('。'):
@@ -80,27 +117,19 @@ def count(txt):
         all_sent_cnt = len(all_sent)
         risk_txt_len = len("".join(sent))  # 风险描述字数
         flag = "否"
-    return risk_cnt, without_risk_cnt, txt_len,\
+    return risk_cnt, without_risk_cnt, txt_len, \
            risk_txt_len, part_sent_cnt, all_sent_cnt, flag
 
 
-def count_risk_txt(txt):
-    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', txt) if '风险' in para[:15]]
-    paras = [para for para in paras if '...' not in para]
-    return paras
-
-
-def count_risk_para(filename):
+def count_risk_para(raw_txt, filename):
     """
     统计风险部分段落个数
+    :param raw_txt:
     :param filename:
     :return:
     """
-    sse_doc_path = 'analysis/sse_doc_v2/'
-    with open(sse_doc_path + filename, 'r', encoding='utf-8') as f:
-        raw_txt = f.read()
-    paras = count_risk_txt(raw_txt)
-    txt="".join(paras)
+    paras = detect_risk_txt(raw_txt, filename)
+    txt = "".join(paras)
     temp = []
     for para in txt.split('\n'):
         if para.strip().endswith('。'):
@@ -110,12 +139,15 @@ def count_risk_para(filename):
 
 sse['filename'] = sse.apply(lambda row: gen_filename(row), axis=1)
 sse['txt'] = sse.apply(lambda row: get_text(row.filename), axis=1)
+sse['raw_txt'] = sse.apply(lambda row: get_raw_txt(row.filename), axis=1)
 sse['risk_cnt'], sse['without_risk_cnt'], sse['txt_len'], sse['risk_txt_len'], sse[
-    'part_sent_cnt'], sse['all_sent_cnt'], sse['flag'] = zip(*sse['txt'].map(count))
-sse['risk_para_cnt']=sse.apply(lambda row:count_risk_para(row.filename),axis=1)
+    'part_sent_cnt'], sse['all_sent_cnt'], sse['flag'] = zip(
+    *sse.apply(lambda row: count(row.txt, row.raw_txt, row.filename), axis=1))
+
+print("统计风险部分段落个数")
+sse['risk_para_cnt'] = sse.apply(lambda row: count_risk_para(row.raw_txt, row.filename), axis=1)
 
 from zhner.core import ner
-
 import numpy as np
 
 
@@ -141,5 +173,6 @@ def get_subname(row):
 sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
 
 cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
-        'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt','part_sent_cnt','all_sent_cnt','flag', 'filename']
+        'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'part_sent_cnt', 'all_sent_cnt', 'flag',
+        'filename']
 sse[~sse['filename'].str.contains('摘要')].to_csv('result/sse_result.csv', index=False, header=False, columns=cols)
