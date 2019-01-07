@@ -31,7 +31,7 @@ def get_text(filename):
     :param filename:
     :return:
     """
-    sse_doc_path = 'analysis/sse_doc/'
+    sse_doc_path = 'analysis/sse_doc_v2/'
     with open(sse_doc_path + filename, 'r', encoding='utf-8') as f:
         txt = f.read()
         txt = " ".join([doc for doc in txt.split('\n') if doc.split()]).strip()
@@ -85,7 +85,7 @@ def count(txt):
 
 
 def count_risk_txt(txt):
-    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', txt) if '风险' in para[:10]]
+    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', txt) if '风险' in para[:15]]
     paras = [para for para in paras if '...' not in para]
     return paras
 
@@ -96,7 +96,7 @@ def count_risk_para(filename):
     :param filename:
     :return:
     """
-    sse_doc_path = 'analysis/sse_doc/'
+    sse_doc_path = 'analysis/sse_doc_v2/'
     with open(sse_doc_path + filename, 'r', encoding='utf-8') as f:
         raw_txt = f.read()
     paras = count_risk_txt(raw_txt)

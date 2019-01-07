@@ -31,7 +31,7 @@ def get_text(filename):
     :param filename:
     :return:
     """
-    szse_doc_path = 'analysis/szse_doc/'
+    szse_doc_path = 'analysis/szse_doc_v2/'
     with open(szse_doc_path + filename, 'r', encoding='utf-8') as f:
         txt = f.read()
         txt = " ".join([doc for doc in txt.split('\n') if doc.split()]).strip()
@@ -96,7 +96,7 @@ def count_risk_para(filename):
     :param filename:
     :return:
     """
-    szse_doc_path = 'analysis/szse_doc/'
+    szse_doc_path = 'analysis/szse_doc_v2/'
     with open(szse_doc_path + filename, 'r', encoding='utf-8') as f:
         raw_txt = f.read()
     paras = count_risk_txt(raw_txt)

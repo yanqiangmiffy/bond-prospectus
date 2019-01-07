@@ -4,7 +4,8 @@ szse_pdf/
 
 analysis/sse_doc/
 analysis/szse_doc/
-
+analysis/sse_doc_v2/
+analysis/szse_doc_v2/
 analysis/un_szse/
 analysis/un_sse/
 zh-NER-TF-master/
