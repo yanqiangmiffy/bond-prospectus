@@ -53,26 +53,54 @@ def detect_risk_txt(raw_txt, filename):
     :param filename:
     :return:
     """
-    paras = [para for para in re.split('第.节|第.条|第十.条|第.章', raw_txt) if '风险' in para[:15]]
-    paras = [para for para in paras if '...' not in para]
+    raw_txt = raw_txt.replace('第一章', '标题')
+    all_paras = re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt)
+
+    # 风险段落数大于13
+    paras = [para for para in re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt) if '风险' in para[:15]]
+    paras = [para for para in paras if '...' not in para and '�����' not in para[:10]]
+    print(filename)
+    # if len(paras) == 1:
+    #     flag_index = all_paras.index(paras[0])
+    #     for i in range(1, 3):  # 1,2
+    #         if flag_index + i + 1<len(all_paras):
+    #             next_para = all_paras[flag_index + i + 1]
+    #             if '\n' in next_para[:16] and len(next_para) < 1000:
+    #                 paras.append(next_para)
+    #             if '\n' not in next_para[:18]:
+    #                 paras.append(next_para)
+    paras=[para.replace('�', '') for para in paras]
 
     # 段落数小于13
-    new_txt = "".join(paras)
+    new_txt = "".join(paras).replace('�', '')
     temp = []
     for para in new_txt.split('\n'):
         if para.strip().endswith('。'):
             temp.append(para)
-    if 0 < len(temp) <= 13 and '摘要' not in filename:
-        all_paras = re.split('第.节|第.条|第十.条|第.章', raw_txt)
+    # if '复星实业可转换公司债券募集说' in filename:
+    #     print(paras)
+    #     print(len(temp))
+    if 0 < len(temp) <= 15 and '摘要' not in filename:
         new_paras = []
         for para in all_paras:
             if '....' not in para and '风险' in para[:15]:
                 flag_para = para
                 flag_index = all_paras.index(flag_para)
                 new_paras.append(flag_para)
-                new_paras.append(all_paras[flag_index + 1])
-                return new_paras
-                # break
+                # if '招商银行发行可转换公' in filename:
+                #     print(paras)
+                #     print(len(temp))
+                #     print(all_paras[flag_index + 1])
+                #     print(new_paras)
+                for i in range(1, 3):  # 1,2
+                    next_para = all_paras[flag_index + i + 1]
+                    if '\n' in next_para[:16] and len(next_para) < 1000:
+                        new_paras.append(next_para)
+                    if '\n' not in next_para[:18]:
+                        new_paras.append(next_para)
+        return new_paras
+        # break
+
     return paras
 
 
