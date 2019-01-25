@@ -57,9 +57,12 @@ def detect_risk_txt(raw_txt, filename):
     all_paras = re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt)
 
     # 风险段落数大于13
-    paras = [para for para in re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt) if '风险' in para[:15]]
+    paras = [para for para in re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt) if
+             '风险' in para[:15] and '风险管理和内部控制' not in para[:30] and '风险管理与内部控制' not in para[:30]]
     paras = [para for para in paras if '...' not in para and '�����' not in para[:10]]
-    print(filename)
+    if '张家港行：公开发行A' in filename:
+        print(len(paras))
+        print(paras)
     # if len(paras) == 1:
     #     flag_index = all_paras.index(paras[0])
     #     for i in range(1, 3):  # 1,2
@@ -69,7 +72,7 @@ def detect_risk_txt(raw_txt, filename):
     #                 paras.append(next_para)
     #             if '\n' not in next_para[:18]:
     #                 paras.append(next_para)
-    paras=[para.replace('�', '') for para in paras]
+    paras = [para.replace('�', '') for para in paras]
 
     # 段落数小于13
     new_txt = "".join(paras).replace('�', '')
@@ -174,7 +177,6 @@ szse['risk_cnt'], szse['without_risk_cnt'], szse['txt_len'], szse['risk_txt_len'
 
 print("统计风险部分段落个数")
 szse['risk_para_cnt'] = szse.apply(lambda row: count_risk_para(row.raw_txt, row.filename), axis=1)
-
 
 from zhner.core import ner
 

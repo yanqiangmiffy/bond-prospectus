@@ -57,7 +57,9 @@ def detect_risk_txt(raw_txt, filename):
     all_paras = re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt)
 
     # 风险段落数大于13
-    paras = [para for para in re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt) if '风险' in para[:15]]
+    # 风险段落数大于13
+    paras = [para for para in re.split('      第.节|      第.条|      第十.条|      第.章', raw_txt) if
+             '风险' in para[:15] and '风险管理和内部控制' not in para[:30] and '风险管理与内部控制' not in para[:30]]
     paras = [para for para in paras if '...' not in para and '�����' not in para[:10]]
     print(filename)
     # if len(paras) == 1:
