@@ -204,7 +204,18 @@ def get_subname(row):
 
 szse['sub_name'] = szse.apply(lambda row: get_subname(row), axis=1)
 
-cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
+def get_jc(row):
+    pattern = "债券简称“(.*?)”"
+    res = re.findall(pattern, row.txt)
+    if len(res) == 0:
+        return ''
+    else:
+        return res[0].replace(' ','')
+
+
+szse['sub_jc'] = szse.apply(lambda row: get_jc(row), axis=1)
+
+cols = ['full_name', 'sub_name', 'sub_jc','CRELEASETIME', 'risk_cnt',
         'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'part_sent_cnt', 'all_sent_cnt', 'flag',
         'filename']
 szse = szse[~szse['filename'].str.contains('摘要')]

@@ -71,7 +71,7 @@ def detect_risk_txt(raw_txt, filename):
     #                 paras.append(next_para)
     #             if '\n' not in next_para[:18]:
     #                 paras.append(next_para)
-    paras=[para.replace('�', '') for para in paras]
+    paras = [para.replace('�', '') for para in paras]
 
     # 段落数小于13
     new_txt = "".join(paras).replace('�', '')
@@ -202,7 +202,19 @@ def get_subname(row):
 
 sse['sub_name'] = sse.apply(lambda row: get_subname(row), axis=1)
 
-cols = ['full_name', 'sub_name', 'CRELEASETIME', 'risk_cnt',
+
+def get_jc(row):
+    pattern = "（简称“(.*?)”）"
+    res = re.findall(pattern, row.txt)
+    if len(res) == 0:
+        return ''
+    else:
+        return res[0].replace(' ','')
+
+
+sse['sub_jc'] = sse.apply(lambda row: get_jc(row), axis=1)
+
+cols = ['full_name', 'sub_name', 'sub_jc','CRELEASETIME', 'risk_cnt',
         'without_risk_cnt', 'txt_len', 'risk_txt_len', 'risk_para_cnt', 'part_sent_cnt', 'all_sent_cnt', 'flag',
         'filename']
 sse[~sse['filename'].str.contains('摘要')].to_csv('result/sse_result.csv', index=False, header=False, columns=cols)

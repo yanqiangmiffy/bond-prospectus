@@ -22,12 +22,12 @@ import pandas as pd
 sse = pd.read_csv('result/sse_result.csv')
 szse = pd.read_csv('result/szse_result.csv')
 
-sse.columns = ['公司全称', '公司简称', '公告日期', '风险词汇频数',
+sse.columns = ['公司全称', '公司简称', '债券简称', '公告日期', '风险词汇频数',
                '前后存在无等的风险频数', '整个债券书字数', '风险部分字数统计', '风险自然段落统计',
                '风险限定字数句子统计', '风险所有句子统计', '是否检测到风险章节', '文档名称']
-szse.columns = ['公司全称', '公司简称', '公告日期', '风险词汇频数',
-               '前后存在无等的风险频数', '整个债券书字数', '风险部分字数统计', '风险自然段落统计',
-               '风险限定字数句子统计', '风险所有句子统计', '是否检测到风险章节', '文档名称']
+szse.columns = ['公司全称', '公司简称', '债券简称', '公告日期', '风险词汇频数',
+                '前后存在无等的风险频数', '整个债券书字数', '风险部分字数统计', '风险自然段落统计',
+                '风险限定字数句子统计', '风险所有句子统计', '是否检测到风险章节', '文档名称']
 df = pd.concat([sse, szse], axis=0, sort=False)
 df['文档名称'] = df['文档名称'].apply(lambda x: x.replace('.txt', ''))
 print(sse.shape)
@@ -36,4 +36,3 @@ print(szse.shape)
 
 # df.to_csv('result/债券募集说明书统计数据.csv', index=False, header=True)
 df.to_csv('result/债券募集说明书统计数据_v4.csv', index=False, header=True)
-
